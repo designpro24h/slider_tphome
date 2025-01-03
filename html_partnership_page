@@ -1,0 +1,179 @@
+ <style>
+
+        .slider-partner {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slider-partner .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slider-partner .slide {
+            flex-shrink: 0;
+            margin: 10px;
+            transition: all 0.3s ease;
+            position: relative; /* Để định vị tuyệt đối cho nội dung */
+
+        }
+
+        .slider-partner .slide.active {
+            width: 380px;
+            height: 542px;
+            z-index: 2;
+        }
+
+        .slider-partner .slide:not(.active) {
+            width: 308px;
+            height: 490px;
+            opacity: 0.7;
+        }
+
+        .slider-partner  .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slider-partner .slide-content{
+          position: absolute;
+          top: 0;
+          left: 0;
+          color: white;
+          padding: 20px;
+        }
+
+        .slider-partner .dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .slider-partner .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #686868;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .slider-partner .dot.active {
+            background-color: #fff;
+        }
+        .slider-partner .slider {
+    cursor: grab;
+}
+.slider-partner .slider:active {
+    cursor: grabbing;
+}
+
+    </style>
+ <div class="slider-partner">
+            <div class="slider">
+                <div class="slide active" data-index="0">
+                    <img src="http://tphomellc.com/wp-content/uploads/2024/12/31/slider-img-1.jpg" alt="slider-img-1">
+                </div>
+                <div class="slide" data-index="1">
+                    <img src="http://tphomellc.com/wp-content/uploads/2024/12/31/slider-img-2.jpg" alt="slider-img-2">
+                </div>
+                <div class="slide" data-index="2">
+                    <img src="http://tphomellc.com/wp-content/uploads/2024/12/31/slider-img-3.jpg" alt="slider-img-3">
+                </div>      
+            </div>
+            <div class="dots">
+                <div class="dot active" data-index="0"></div>
+                <div class="dot" data-index="1"></div>
+                <div class="dot" data-index="2"></div>
+            </div>
+        </div>
+         <script>
+    const slider = document.querySelector('.slider');
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+let currentIndex = 0;
+let isDragging = false;
+let startX;
+let scrollLeft;
+
+function updateSlider() {
+    // Cập nhật các slide theo index
+    slides.forEach((slide, index) => {
+        if (index === currentIndex) {
+            slide.classList.add('active');
+        } else {
+            slide.classList.remove('active');
+        }
+    });
+
+    // Cập nhật các dot tương ứng
+    dots.forEach((dot, index) => {
+        if (index === currentIndex) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+
+    // Cập nhật vị trí của slider
+    slider.style.transform = `translateX(-${currentIndex * 329}px)`;
+}
+
+// Cập nhật slider khi click vào dot
+dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+        currentIndex = index;
+        updateSlider();
+    });
+});
+
+// Bắt đầu sự kiện kéo chuột
+slider.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+});
+
+// Khi chuột rời khỏi slider
+slider.addEventListener('mouseleave', () => {
+    isDragging = false;
+});
+
+// Khi nhả chuột
+slider.addEventListener('mouseup', () => {
+    isDragging = false;
+    // Cập nhật slider khi kéo xong
+    updateSlider();
+});
+
+// Khi di chuyển chuột
+slider.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX); // Khoảng cách di chuyển chuột
+
+    slider.scrollLeft = scrollLeft - walk;
+
+    // Cập nhật index nếu di chuyển qua một item
+    if (walk > 100 && currentIndex < slides.length - 1) {
+        currentIndex++;
+        updateSlider();
+        startX = e.pageX; // Cập nhật startX khi di chuyển
+    } else if (walk < -100 && currentIndex > 0) {
+        currentIndex--;
+        updateSlider();
+        startX = e.pageX; // Cập nhật startX khi di chuyển
+    }
+});
+
+// Cập nhật slider ban đầu
+updateSlider();
+
+
+    </script>
